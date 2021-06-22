@@ -1,10 +1,12 @@
 package com.antorin.stack_crawler.api;
 
+import com.antorin.stack_crawler.scraper.ResultType;
 import com.antorin.stack_crawler.scraper.ScrapedContent;
 import com.antorin.stack_crawler.scraper.Scraper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,9 +25,18 @@ public class Controller {
     }
 
     @GetMapping("/scrape")
-    public ApiResponse<ScrapedContent> scrape() {
-        ScrapedContent result = this.scraper.scrape("nodejs stack overflow");
+    public ApiResponse<ScrapedContent> scrape(@RequestParam(value = "q", defaultValue = "") String q,
+            @RequestParam(value = "type", defaultValue = "standard") ResultType type) {
 
-        return new ApiResponse<ScrapedContent>("ok", result);
+        try {
+            ScrapedContent result = this.scraper.scrape(q, type);
+
+            if (result == null)
+                throw new Exception("Not found");
+
+            return new ApiResponse<ScrapedContent>("ok", result);
+        } catch (Exception e) {
+            return new ApiResponse<ScrapedContent>("error", null);
+        }
     }
 }

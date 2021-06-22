@@ -12,7 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class Scraper {
 
-    public ScrapedContent scrape(String searchString) {
+    private void filterContent(ScrapedContent content, ResultType type) {
+    }
+
+    public ScrapedContent scrape(String searchString, ResultType type) {
         try {
             Document htmlDoc = Jsoup.connect("https://www.google.com/search?q=" + searchString).get();
 
@@ -29,6 +32,8 @@ public class Scraper {
             paragraphElements.forEach(element -> paragraphs.add(element.text()));
 
             ScrapedContent result = new ScrapedContent(title, paragraphs, links);
+
+            this.filterContent(result, type);
 
             return result;
         } catch (Exception e) {
