@@ -1,5 +1,6 @@
 package com.antorin.stack_crawler.scraper;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +13,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class Scraper {
 
-    private void filterContent(ScrapedContent content, ResultType type) {
+    private void filterContent(ScrapedContent content, ContentType type) {
     }
 
-    public ScrapedContent scrape(String searchString, ResultType type) {
+    private List<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName) {
+        List<String> filteredLinks = new ArrayList<String>();
+
+        searchResult.getLinks().forEach(link -> {
+            try {
+                URL url = new URL(link);
+                String host = url.getHost();
+                if (host.indexOf(hostName) != -1)
+                    filteredLinks.add(link);
+            } catch (Exception e) {
+
+            }
+        });
+
+        return filteredLinks;
+    }
+
+    private ScrapedContent scrape(String searchString, ContentType type) {
         try {
             Document htmlDoc = Jsoup.connect("https://www.google.com/search?q=" + searchString).get();
 
@@ -38,6 +56,28 @@ public class Scraper {
             return result;
         } catch (Exception e) {
             System.out.println(e);
+            return null;
+        }
+    }
+
+    public ScrapedContent handleScrape(String searchString, ContentType type, HostNameFilterType hostNameFilterType,
+            String hostName) {
+        try {
+            if (searchString == null || searchString == "")
+                throw new Exception("No query");
+
+            ScrapedContent searchResult = this.scrape(searchString, type);
+
+            if (hostName == null || hostName == "" || hostName == "searchResults")
+                return searchResult;
+
+            List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
+
+            searchResult.setLinks(userPreferredHosts);
+
+            return searchResult;
+
+        } catch (Exception e) {
             return null;
         }
     }

@@ -1,12 +1,13 @@
 package com.antorin.stack_crawler.api;
 
-import com.antorin.stack_crawler.scraper.ResultType;
 import com.antorin.stack_crawler.scraper.ScrapedContent;
 import com.antorin.stack_crawler.scraper.Scraper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,12 +25,12 @@ public class Controller {
         return res;
     }
 
-    @GetMapping("/scrape")
-    public ApiResponse<ScrapedContent> scrape(@RequestParam(value = "q", defaultValue = "") String q,
-            @RequestParam(value = "type", defaultValue = "standard") ResultType type) {
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<ScrapedContent> scrape(@RequestBody SearchPostBody reqBody) {
 
         try {
-            ScrapedContent result = this.scraper.scrape(q, type);
+            ScrapedContent result = this.scraper.handleScrape(reqBody.getQ(), reqBody.getContentType(),
+                    reqBody.getHostNameFilterType(), reqBody.getHostName());
 
             if (result == null)
                 throw new Exception("Not found");
