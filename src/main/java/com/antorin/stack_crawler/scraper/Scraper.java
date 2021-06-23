@@ -38,6 +38,11 @@ public class Scraper {
             if (url == null)
                 url = "https://www.google.com/search?q=";
 
+            URL urlRef = new URL(url);
+            final String hostDomainRef = urlRef.getProtocol() + "://" + urlRef.getHost();
+
+            System.out.println(hostDomainRef);
+
             if (searchString == null)
                 searchString = "";
 
@@ -49,16 +54,35 @@ public class Scraper {
             Elements linkElements = body.getElementsByTag("a");
             Elements textContentElements = body.getElementsByTag("div");
             Elements imageElements = body.getElementsByTag("img");
+            Elements videoElements = body.getElementsByTag("video");
 
             List<String> links = new ArrayList<String>();
             List<String> textContent = new ArrayList<String>();
             List<String> imageLinks = new ArrayList<String>();
+            List<String> videoLinks = new ArrayList<String>();
 
             linkElements.forEach(element -> links.add(element.attr("abs:href")));
-            textContentElements.forEach(element -> textContent.add(element.text()));
-            imageElements.forEach(element -> imageLinks.add(element.attr("src")));
 
-            ScrapedContent result = new ScrapedContent(title, textContent, links, imageLinks);
+            textContentElements.forEach(element -> {
+                if (element.text() != "")
+                    textContent.add(element.text());
+            });
+
+            imageElements.forEach(element -> {
+                String thisUrl = element.attr("src");
+
+                if (!thisUrl.startsWith("data:")) {
+                    if (thisUrl.startsWith("http"))
+                        imageLinks.add(thisUrl);
+                    else if (thisUrl.startsWith("//"))
+                        imageLinks.add("https:" + thisUrl);
+                    else if (thisUrl.startsWith("/"))
+                        imageLinks.add(hostDomainRef + thisUrl);
+                }
+            });
+            videoElements.forEach(element -> videoLinks.add(element.attr("abs:src")));
+
+            ScrapedContent result = new ScrapedContent(title, textContent, links, imageLinks, videoLinks);
 
             this.filterContent(result);
 

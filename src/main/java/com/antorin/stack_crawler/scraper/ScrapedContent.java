@@ -7,12 +7,23 @@ public class ScrapedContent {
     private List<String> textContent;
     private List<String> links;
     private List<String> imageLinks;
+    private List<String> videoLinks;
 
-    public ScrapedContent(String title, List<String> textContent, List<String> links, List<String> imageLinks) {
+    public ScrapedContent(String title, List<String> textContent, List<String> links, List<String> imageLinks,
+            List<String> videoLinks) {
         this.setTitle(title);
         this.setTextContent(textContent);
         this.setLinks(links);
         this.setImageLinks(imageLinks);
+        this.setVideoLinks(videoLinks);
+    }
+
+    public List<String> getVideoLinks() {
+        return videoLinks;
+    }
+
+    public void setVideoLinks(List<String> videoLinks) {
+        this.videoLinks = videoLinks;
     }
 
     public String getTitle() {
