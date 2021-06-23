@@ -1,12 +1,8 @@
 package com.antorin.stack_crawler.api;
 
-import com.antorin.stack_crawler.scraper.ContentType;
-import com.antorin.stack_crawler.scraper.HostNameFilterType;
-
 public class SearchPostBody {
     private String q;
-    private ContentType contentType;
-    private HostNameFilterType hostNameFilterType;
+    private String hostNameFilterType;
     private String hostName = "searchResults";
 
     public String getQ() {
@@ -25,20 +21,12 @@ public class SearchPostBody {
         this.hostName = hostName;
     }
 
-    public HostNameFilterType getHostNameFilterType() {
+    public String getHostNameFilterType() {
         return hostNameFilterType;
     }
 
-    public void setFilterType(HostNameFilterType hostNameFilterType) {
+    public void setFilterType(String hostNameFilterType) {
         this.hostNameFilterType = hostNameFilterType;
-    }
-
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(ContentType contentType) {
-        this.contentType = contentType;
     }
 
 }

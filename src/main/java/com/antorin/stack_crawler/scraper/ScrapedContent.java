@@ -4,13 +4,23 @@ import java.util.List;
 
 public class ScrapedContent {
     private String title;
-    private List<String> paragraphs;
+    private List<String> textContent;
     private List<String> links;
+    private List<String> imageLinks;
 
-    public ScrapedContent(String title, List<String> paragraphs2, List<String> links2) {
+    public ScrapedContent(String title, List<String> textContent, List<String> links, List<String> imageLinks) {
         this.setTitle(title);
-        this.setParagraphs(paragraphs2);
-        this.setLinks(links2);
+        this.setTextContent(textContent);
+        this.setLinks(links);
+        this.setImageLinks(imageLinks);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public List<String> getLinks() {
@@ -21,19 +31,19 @@ public class ScrapedContent {
         this.links = links;
     }
 
-    public List<String> getParagraphs() {
-        return paragraphs;
+    public List<String> getTextContent() {
+        return textContent;
     }
 
-    public void setParagraphs(List<String> paragraphs) {
-        this.paragraphs = paragraphs;
+    public void setTextContent(List<String> textContent) {
+        this.textContent = textContent;
     }
 
-    public String getTitle() {
-        return title;
+    public List<String> getImageLinks() {
+        return imageLinks;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setImageLinks(List<String> imageLinks) {
+        this.imageLinks = imageLinks;
     }
 }

@@ -1,14 +1,18 @@
 package com.antorin.stack_crawler.api;
 
+import com.antorin.stack_crawler.scraper.HostNameFilterType;
 import com.antorin.stack_crawler.scraper.ScrapedContent;
 import com.antorin.stack_crawler.scraper.Scraper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class Controller {
@@ -26,18 +30,22 @@ public class Controller {
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ScrapedContent> scrape(@RequestBody SearchPostBody reqBody) {
-
+    public ResponseEntity<ApiResponse<?>> getSearchData(@RequestBody SearchPostBody reqBody) {
         try {
-            ScrapedContent result = this.scraper.handleScrape(reqBody.getQ(), reqBody.getContentType(),
-                    reqBody.getHostNameFilterType(), reqBody.getHostName());
+            HostNameFilterType hostNameFilter = reqBody.getHostNameFilterType() == null
+                    || reqBody.getHostNameFilterType() == "" ? HostNameFilterType.none
+                            : HostNameFilterType.valueOf(reqBody.getHostNameFilterType());
+
+            ScrapedContent result = this.scraper.handleScrape(reqBody.getQ(), hostNameFilter, reqBody.getHostName());
 
             if (result == null)
-                throw new Exception("Not found");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not found - consider refining search");
 
-            return new ApiResponse<ScrapedContent>("ok", result);
+            return ResponseEntity.status(200).body(new ApiResponse<ScrapedContent>("ok", result));
         } catch (Exception e) {
-            return new ApiResponse<ScrapedContent>("error", null);
+            ResponseEntity<ApiResponse<?>> response = ResponseEntity.status(400)
+                    .body(new ApiResponse<String>("error", e.getMessage()));
+            return response;
         }
     }
 }

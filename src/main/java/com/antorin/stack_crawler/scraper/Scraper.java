@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Scraper {
 
-    private void filterContent(ScrapedContent content, ContentType type) {
+    private void filterContent(ScrapedContent content) {
     }
 
     private List<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName) {
@@ -33,25 +33,34 @@ public class Scraper {
         return filteredLinks;
     }
 
-    private ScrapedContent scrape(String searchString, ContentType type) {
+    private ScrapedContent scrape(String searchString, String url) {
         try {
-            Document htmlDoc = Jsoup.connect("https://www.google.com/search?q=" + searchString).get();
+            if (url == null)
+                url = "https://www.google.com/search?q=";
+
+            if (searchString == null)
+                searchString = "";
+
+            Document htmlDoc = Jsoup.connect(url + searchString).get();
 
             String title = htmlDoc.title();
             Element body = htmlDoc.body();
 
             Elements linkElements = body.getElementsByTag("a");
-            Elements paragraphElements = body.getElementsByTag("p");
+            Elements textContentElements = body.getElementsByTag("div");
+            Elements imageElements = body.getElementsByTag("img");
 
             List<String> links = new ArrayList<String>();
-            List<String> paragraphs = new ArrayList<String>();
+            List<String> textContent = new ArrayList<String>();
+            List<String> imageLinks = new ArrayList<String>();
 
             linkElements.forEach(element -> links.add(element.attr("abs:href")));
-            paragraphElements.forEach(element -> paragraphs.add(element.text()));
+            textContentElements.forEach(element -> textContent.add(element.text()));
+            imageElements.forEach(element -> imageLinks.add(element.attr("src")));
 
-            ScrapedContent result = new ScrapedContent(title, paragraphs, links);
+            ScrapedContent result = new ScrapedContent(title, textContent, links, imageLinks);
 
-            this.filterContent(result, type);
+            this.filterContent(result);
 
             return result;
         } catch (Exception e) {
@@ -60,23 +69,38 @@ public class Scraper {
         }
     }
 
-    public ScrapedContent handleScrape(String searchString, ContentType type, HostNameFilterType hostNameFilterType,
-            String hostName) {
+    public ScrapedContent handleScrape(String searchString, HostNameFilterType hostNameFilterType, String hostName) {
         try {
             if (searchString == null || searchString == "")
                 throw new Exception("No query");
 
-            ScrapedContent searchResult = this.scrape(searchString, type);
+            ScrapedContent searchResult = this.scrape(searchString, null);
 
             if (hostName == null || hostName == "" || hostName == "searchResults")
                 return searchResult;
 
-            List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
+            switch (hostNameFilterType) {
+                case page: {
+                    List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
 
-            searchResult.setLinks(userPreferredHosts);
+                    searchResult.setLinks(userPreferredHosts);
 
-            return searchResult;
+                    return searchResult;
+                }
+                case follow: {
+                    List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
 
+                    String hostUrl = userPreferredHosts.get(0);
+
+                    ScrapedContent preferredHostContent = this.scrape(null, hostUrl);
+
+                    return preferredHostContent;
+                }
+                case none:
+                    return searchResult;
+                default:
+                    return searchResult;
+            }
         } catch (Exception e) {
             return null;
         }
