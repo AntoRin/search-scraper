@@ -1,4 +1,4 @@
-package com.antorin.stack_crawler.api;
+package com.antorin.stack_crawler.models;
 
 public class ApiResponse<T> {
     private String status;

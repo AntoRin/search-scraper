@@ -1,15 +1,16 @@
-package com.antorin.stack_crawler.scraper;
+package com.antorin.stack_crawler.models;
 
 import java.util.List;
+import java.util.Set;
 
 public class ScrapedContent {
     private String title;
-    private List<String> textContent;
+    private Set<String> textContent;
     private List<String> links;
     private List<String> imageLinks;
     private List<String> videoLinks;
 
-    public ScrapedContent(String title, List<String> textContent, List<String> links, List<String> imageLinks,
+    public ScrapedContent(String title, Set<String> textContent, List<String> links, List<String> imageLinks,
             List<String> videoLinks) {
         this.setTitle(title);
         this.setTextContent(textContent);
@@ -42,11 +43,11 @@ public class ScrapedContent {
         this.links = links;
     }
 
-    public List<String> getTextContent() {
+    public Set<String> getTextContent() {
         return textContent;
     }
 
-    public void setTextContent(List<String> textContent) {
+    public void setTextContent(Set<String> textContent) {
         this.textContent = textContent;
     }
 
