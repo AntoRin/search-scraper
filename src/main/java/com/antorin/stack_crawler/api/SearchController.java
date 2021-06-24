@@ -41,7 +41,7 @@ public class SearchController {
                             : HostNameFilterType.valueOf(reqBody.getHostNameFilterType());
 
             ScrapedContent result = this.scraper.handleDefaultScrape(reqBody.getQ(), hostNameFilter,
-                    reqBody.getHostName(), "https://www.google.com/search?q=");
+                    reqBody.getHostName(), "https://www.google.com/search?q=", reqBody.getTotalPages());
 
             if (result == null)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not found - consider refining search");
@@ -58,7 +58,7 @@ public class SearchController {
     public ResponseEntity<ApiResponse<?>> getYtData(@RequestBody SearchPostBody reqBody) {
         try {
             ScrapedContent result = this.scraper.handlePathScrape(reqBody.getQ(), "https://www.google.com/search?q=",
-                    "Videos");
+                    "Videos", reqBody.getTotalPages());
 
             if (result == null)
                 throw new Exception("Not found");

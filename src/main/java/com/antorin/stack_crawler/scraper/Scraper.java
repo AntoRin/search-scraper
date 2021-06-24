@@ -4,9 +4,9 @@ import com.antorin.stack_crawler.models.ScrapedContent;
 import com.antorin.stack_crawler.utils.ScraperUtility;
 import com.antorin.stack_crawler.models.HostNameFilterType;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +60,16 @@ public class Scraper implements IScraper {
     }
 
     @Override
-    public ScrapedContent scrape(String searchString, String url) {
+    public ScrapedContent scrape(String searchString, String url, int totalPages,
+            ScrapedContent currentScrapedContent) {
+        if (totalPages == 0)
+            return currentScrapedContent;
+
+        List<String> currentLinks = currentScrapedContent.getLinks();
+        Set<String> currentTextContent = currentScrapedContent.getTextContent();
+        List<String> currentImageLinks = currentScrapedContent.getImageLinks();
+        List<String> currentVideoLinks = currentScrapedContent.getVideoLinks();
+
         try {
             URL urlRef = new URL(url);
             final String hostDomainRef = urlRef.getProtocol() + "://" + urlRef.getHost();
@@ -68,9 +77,14 @@ public class Scraper implements IScraper {
             if (searchString == null)
                 searchString = "";
 
-            Document htmlDoc = Jsoup.connect(url + searchString).get();
+            Document htmlDoc = Jsoup.connect(url + searchString).userAgent(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36")
+                    .get();
 
             String title = htmlDoc.title();
+
+            currentScrapedContent.setTitle(title);
+
             Element body = htmlDoc.body();
 
             Elements linkElements = htmlDoc.select("a");
@@ -78,43 +92,56 @@ public class Scraper implements IScraper {
             Elements imageElements = body.getElementsByTag("img");
             Elements videoElements = body.getElementsByTag("video");
 
-            List<String> links = new ArrayList<String>();
-            Set<String> textContent = new LinkedHashSet<String>();
-            List<String> imageLinks = new ArrayList<String>();
-            List<String> videoLinks = new ArrayList<String>();
-
             linkElements.forEach(element -> {
                 String refinedLink = ScraperUtility.refineLink(element.attr("href"), hostDomainRef);
-                if (refinedLink != null)
-                    links.add(refinedLink);
+                if (refinedLink != null) {
+                    currentLinks.add(refinedLink);
+                    currentScrapedContent.setLinks(currentLinks);
+                }
             });
 
             textContentElements.forEach(element -> {
-                if (element.text() != "")
-                    textContent.add(element.text());
+                if (element.text() != "") {
+                    currentTextContent.add(element.text());
+                    currentScrapedContent.setTextContent(currentTextContent);
+                }
             });
 
             imageElements.forEach(element -> {
                 String refinedLink = ScraperUtility.refineLink(element.attr("src"), hostDomainRef);
-                if (refinedLink != null)
-                    imageLinks.add(refinedLink);
+                if (refinedLink != null) {
+                    currentImageLinks.add(refinedLink);
+                    currentScrapedContent.setImageLinks(currentImageLinks);
+                }
             });
-            videoElements.forEach(element -> videoLinks.add(element.attr("abs:src")));
+            videoElements.forEach(element -> {
+                currentVideoLinks.add(element.attr("abs:src"));
+                currentScrapedContent.setVideoLinks(currentVideoLinks);
+            });
 
-            ScrapedContent result = new ScrapedContent(title, textContent, links, imageLinks, videoLinks);
+            String nextPageUrl = htmlDoc.select("#pnnext").attr("abs:href");
 
-            return result;
+            System.out.println(nextPageUrl);
+
+            Thread.sleep(1000);
+
+            return this.scrape(searchString, nextPageUrl, --totalPages, currentScrapedContent);
+        } catch (IOException IOE) {
+            System.out.println(IOE);
+            return currentScrapedContent;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getLocalizedMessage());
             return null;
         }
     }
 
     @Override
     public ScrapedContent handleDefaultScrape(String searchString, HostNameFilterType hostNameFilterType,
-            String hostName, String url) {
+            String hostName, String url, int totalPages) {
         try {
-            ScrapedContent searchResult = this.scrape(searchString, url);
+            ScrapedContent searchResult = new ScrapedContent();
+
+            searchResult = this.scrape(searchString, url, totalPages, searchResult);
 
             if (hostName == null || hostName == "" || hostName == "searchResults")
                 return searchResult;
@@ -132,7 +159,8 @@ public class Scraper implements IScraper {
 
                     String hostUrl = userPreferredHosts.get(0);
 
-                    ScrapedContent preferredHostContent = this.scrape(null, hostUrl);
+                    ScrapedContent preferredHostContent = new ScrapedContent();
+                    preferredHostContent = this.scrape(null, hostUrl, totalPages, preferredHostContent);
 
                     return preferredHostContent;
                 }
@@ -142,24 +170,28 @@ public class Scraper implements IScraper {
                     return searchResult;
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
     @Override
-    public ScrapedContent handlePathScrape(String searchString, String url, String pathType) {
+    public ScrapedContent handlePathScrape(String searchString, String url, String pathType, int totalPages) {
         try {
             Elements linkNodes = this.getDomNodes("a", url + searchString);
 
             String pathLink = this.getSpecificPath(linkNodes, pathType);
 
-            ScrapedContent result = this.handleDefaultScrape(null, HostNameFilterType.page, "youtube", pathLink);
+            ScrapedContent result = this.handleDefaultScrape(null, HostNameFilterType.page, "youtube", pathLink,
+                    totalPages);
+
             result.setImageLinks(null);
             result.setTextContent(null);
             result.setVideoLinks(null);
 
             return result;
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }

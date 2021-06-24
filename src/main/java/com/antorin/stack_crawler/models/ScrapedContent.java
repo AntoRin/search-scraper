@@ -1,5 +1,7 @@
 package com.antorin.stack_crawler.models;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,13 +12,26 @@ public class ScrapedContent {
     private List<String> imageLinks;
     private List<String> videoLinks;
 
+    public ScrapedContent() {
+        this.title = "";
+
+        this.textContent = new LinkedHashSet<String>();
+        textContent.add("");
+
+        this.links = this.imageLinks = this.videoLinks = new ArrayList<String>();
+
+        this.links.add("");
+        this.imageLinks.add("");
+        this.videoLinks.add("");
+    }
+
     public ScrapedContent(String title, Set<String> textContent, List<String> links, List<String> imageLinks,
             List<String> videoLinks) {
-        this.setTitle(title);
-        this.setTextContent(textContent);
-        this.setLinks(links);
-        this.setImageLinks(imageLinks);
-        this.setVideoLinks(videoLinks);
+        this.title = title;
+        this.textContent = textContent;
+        this.links = links;
+        this.imageLinks = imageLinks;
+        this.videoLinks = videoLinks;
     }
 
     public List<String> getVideoLinks() {

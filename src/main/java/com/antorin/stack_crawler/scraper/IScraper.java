@@ -14,10 +14,10 @@ public interface IScraper {
 
     List<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName);
 
-    ScrapedContent scrape(String searchString, String url);
+    ScrapedContent scrape(String searchString, String url, int totalPages, ScrapedContent currentScrapedContent);
 
     ScrapedContent handleDefaultScrape(String searchString, HostNameFilterType hostNameFilterType, String hostName,
-            String url);
+            String url, int totalPages);
 
-    ScrapedContent handlePathScrape(String searchString, String url, String pathType);
+    ScrapedContent handlePathScrape(String searchString, String url, String pathType, int totalPages);
 }

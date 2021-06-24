@@ -4,6 +4,7 @@ public class SearchPostBody {
     private String q;
     private String hostNameFilterType;
     private String hostName = "searchResults";
+    private int totalPages;
 
     public String getQ() {
         return q;
@@ -25,8 +26,16 @@ public class SearchPostBody {
         return hostNameFilterType;
     }
 
-    public void setFilterType(String hostNameFilterType) {
+    public void setHostNameFilterType(String hostNameFilterType) {
         this.hostNameFilterType = hostNameFilterType;
+    }
+
+    public int getTotalPages() {
+        return this.totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
     }
 
 }
