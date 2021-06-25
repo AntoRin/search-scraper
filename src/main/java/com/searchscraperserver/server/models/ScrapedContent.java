@@ -1,4 +1,4 @@
-package com.antorin.stack_crawler.models;
+package com.searchscraperserver.server.models;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

@@ -1,10 +1,10 @@
-package com.antorin.stack_crawler.api;
+package com.searchscraperserver.server.api;
 
-import com.antorin.stack_crawler.models.ApiResponse;
-import com.antorin.stack_crawler.models.SearchPostBody;
-import com.antorin.stack_crawler.models.HostNameFilterType;
-import com.antorin.stack_crawler.models.ScrapedContent;
-import com.antorin.stack_crawler.scraper.Scraper;
+import com.searchscraperserver.server.models.ApiResponse;
+import com.searchscraperserver.server.models.SearchPostBody;
+import com.searchscraperserver.server.models.HostNameFilterType;
+import com.searchscraperserver.server.models.ScrapedContent;
+import com.searchscraperserver.server.scraper.Scraper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

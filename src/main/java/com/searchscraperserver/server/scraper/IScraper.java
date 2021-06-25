@@ -1,9 +1,9 @@
-package com.antorin.stack_crawler.scraper;
+package com.searchscraperserver.server.scraper;
 
 import java.util.Set;
 
-import com.antorin.stack_crawler.models.HostNameFilterType;
-import com.antorin.stack_crawler.models.ScrapedContent;
+import com.searchscraperserver.server.models.HostNameFilterType;
+import com.searchscraperserver.server.models.ScrapedContent;
 
 import org.jsoup.select.Elements;
 

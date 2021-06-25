@@ -7,11 +7,11 @@
 		<version>2.5.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.antorin</groupId>
-	<artifactId>stack_crawler</artifactId>
+	<groupId>com.searchscraperserver</groupId>
+	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>stack_crawler</name>
-	<description>Demo project for Spring Boot</description>
+	<name>server</name>
+	<description>The backend application for search-scraper</description>
 	<properties>
 		<java.version>16</java.version>
 	</properties>

@@ -1,4 +1,4 @@
-package com.antorin.stack_crawler.utils;
+package com.searchscraperserver.server.utils;
 
 public class ScraperUtility {
     public static String refineLink(String source, String hostDomainRef) {

@@ -1,4 +1,4 @@
-package com.antorin.stack_crawler;
+package com.searchscraperserver.server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

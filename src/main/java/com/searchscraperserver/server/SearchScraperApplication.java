@@ -1,13 +1,13 @@
-package com.antorin.stack_crawler;
+package com.searchscraperserver.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class StackCrawlerApplication {
+public class SearchScraperApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StackCrawlerApplication.class, args);
+		SpringApplication.run(SearchScraperApplication.class, args);
 	}
 
 }

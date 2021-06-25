@@ -1,8 +1,8 @@
-package com.antorin.stack_crawler.scraper;
+package com.searchscraperserver.server.scraper;
 
-import com.antorin.stack_crawler.models.ScrapedContent;
-import com.antorin.stack_crawler.utils.ScraperUtility;
-import com.antorin.stack_crawler.models.HostNameFilterType;
+import com.searchscraperserver.server.models.ScrapedContent;
+import com.searchscraperserver.server.utils.ScraperUtility;
+import com.searchscraperserver.server.models.HostNameFilterType;
 
 import java.io.IOException;
 import java.net.URL;
