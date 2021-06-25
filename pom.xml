@@ -13,7 +13,7 @@
 	<name>server</name>
 	<description>The backend application for search-scraper</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>16</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
