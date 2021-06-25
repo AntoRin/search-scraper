@@ -1,6 +1,6 @@
 package com.antorin.stack_crawler.scraper;
 
-import java.util.List;
+import java.util.Set;
 
 import com.antorin.stack_crawler.models.HostNameFilterType;
 import com.antorin.stack_crawler.models.ScrapedContent;
@@ -12,7 +12,7 @@ public interface IScraper {
 
     Elements getDomNodes(String elementType, String url);
 
-    List<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName);
+    Set<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName);
 
     ScrapedContent scrape(String searchString, String url, int totalPages, ScrapedContent currentScrapedContent);
 

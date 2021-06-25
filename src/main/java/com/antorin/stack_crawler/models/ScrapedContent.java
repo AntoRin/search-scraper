@@ -8,7 +8,7 @@ import java.util.Set;
 public class ScrapedContent {
     private String title;
     private Set<String> textContent;
-    private List<String> links;
+    private Set<String> links;
     private List<String> imageLinks;
     private List<String> videoLinks;
 
@@ -18,14 +18,16 @@ public class ScrapedContent {
         this.textContent = new LinkedHashSet<String>();
         textContent.add("");
 
-        this.links = this.imageLinks = this.videoLinks = new ArrayList<String>();
+        this.links = new LinkedHashSet<String>();
+        links.add("");
 
-        this.links.add("");
+        this.imageLinks = this.videoLinks = new ArrayList<String>();
+
         this.imageLinks.add("");
         this.videoLinks.add("");
     }
 
-    public ScrapedContent(String title, Set<String> textContent, List<String> links, List<String> imageLinks,
+    public ScrapedContent(String title, Set<String> textContent, Set<String> links, List<String> imageLinks,
             List<String> videoLinks) {
         this.title = title;
         this.textContent = textContent;
@@ -50,11 +52,11 @@ public class ScrapedContent {
         this.title = title;
     }
 
-    public List<String> getLinks() {
+    public Set<String> getLinks() {
         return links;
     }
 
-    public void setLinks(List<String> links) {
+    public void setLinks(Set<String> links) {
         this.links = links;
     }
 

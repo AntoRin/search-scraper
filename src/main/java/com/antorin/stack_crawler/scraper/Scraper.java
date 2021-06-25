@@ -6,7 +6,7 @@ import com.antorin.stack_crawler.models.HostNameFilterType;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,8 +42,8 @@ public class Scraper implements IScraper {
     }
 
     @Override
-    public List<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName) {
-        List<String> filteredLinks = new ArrayList<String>();
+    public Set<String> filterLinksByPrefferedHost(ScrapedContent searchResult, String hostName) {
+        Set<String> filteredLinks = new LinkedHashSet<String>();
 
         searchResult.getLinks().forEach(link -> {
             try {
@@ -65,7 +65,7 @@ public class Scraper implements IScraper {
         if (totalPages == 0)
             return currentScrapedContent;
 
-        List<String> currentLinks = currentScrapedContent.getLinks();
+        Set<String> currentLinks = currentScrapedContent.getLinks();
         Set<String> currentTextContent = currentScrapedContent.getTextContent();
         List<String> currentImageLinks = currentScrapedContent.getImageLinks();
         List<String> currentVideoLinks = currentScrapedContent.getVideoLinks();
@@ -148,16 +148,21 @@ public class Scraper implements IScraper {
 
             switch (hostNameFilterType) {
                 case page: {
-                    List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
+                    Set<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
 
                     searchResult.setLinks(userPreferredHosts);
 
                     return searchResult;
                 }
                 case follow: {
-                    List<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
+                    Set<String> userPreferredHosts = this.filterLinksByPrefferedHost(searchResult, hostName);
 
-                    String hostUrl = userPreferredHosts.get(0);
+                    String hostUrl = "";
+
+                    for (String link : userPreferredHosts) {
+                        hostUrl = link;
+                        break;
+                    }
 
                     ScrapedContent preferredHostContent = new ScrapedContent();
                     preferredHostContent = this.scrape(null, hostUrl, totalPages, preferredHostContent);
